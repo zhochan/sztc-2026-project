@@ -1,0 +1,1002 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>2026南校区暑期专项项目进度看板</title>
+  <style>
+    :root {
+      --bg: #f0f2f5;
+      --card: #ffffff;
+      --primary: #1a73e8;
+      --primary-light: #e8f0fe;
+      --accent: #34a853;
+      --text: #202124;
+      --text-secondary: #5f6368;
+      --border: #e0e0e0;
+      --radius: 12px;
+      --shadow: 0 1px 3px rgba(0,0,0,.08);
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* Header */
+    .header {
+      background: linear-gradient(135deg, #1a73e8 0%, #0d47a1 100%);
+      color: #fff;
+      padding: 28px 40px 24px;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      box-shadow: 0 2px 8px rgba(0,0,0,.15);
+    }
+    .header-top { display: flex; align-items: center; justify-content: space-between; }
+    .header h1 { font-size: 20px; font-weight: 700; letter-spacing: .3px; }
+    .header p  { font-size: 12px; opacity: .8; margin-top: 4px; }
+    .update-badge {
+      font-size: 11px;
+      background: rgba(255,255,255,.2);
+      padding: 4px 12px;
+      border-radius: 20px;
+    }
+
+    .container { max-width: 1200px; margin: 0 auto; padding: 24px 20px 80px; }
+
+    /* Stats */
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+      gap: 14px;
+      margin-bottom: 24px;
+    }
+    .stat-card {
+      background: var(--card);
+      border-radius: var(--radius);
+      padding: 18px;
+      box-shadow: var(--shadow);
+      text-align: center;
+      transition: transform .15s;
+    }
+    .stat-card:hover { transform: translateY(-2px); }
+    .stat-num { font-size: 32px; font-weight: 800; line-height: 1; }
+    .stat-label { font-size: 12px; color: var(--text-secondary); margin-top: 6px; }
+    .stat-sub { font-size: 11px; margin-top: 4px; }
+    .c-primary { color: var(--primary); }
+    .c-accent  { color: var(--accent); }
+    .c-warning { color: #e37400; }
+    .c-danger  { color: #ea4335; }
+    .c-gray    { color: #80868b; }
+
+    /* Project color dots in stats */
+    .color-legend {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 10px;
+      justify-content: center;
+    }
+    .color-legend span {
+      font-size: 10px;
+      color: var(--text-secondary);
+      display: flex;
+      align-items: center;
+      gap: 3px;
+    }
+    .cdot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      display: inline-block;
+      flex-shrink: 0;
+    }
+
+    /* Tabs */
+    .tab-nav {
+      display: flex;
+      gap: 4px;
+      background: var(--card);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 4px;
+      margin-bottom: 20px;
+      overflow-x: auto;
+    }
+    .tab-btn {
+      flex: 1;
+      min-width: 90px;
+      padding: 10px 12px;
+      border: none;
+      background: transparent;
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--text-secondary);
+      cursor: pointer;
+      border-radius: 8px;
+      transition: all .15s;
+      white-space: nowrap;
+    }
+    .tab-btn.active { background: var(--primary); color: #fff; }
+    .tab-btn:hover:not(.active) { background: #f0f0f0; }
+    .tab-content { display: none; }
+    .tab-content.active { display: block; }
+
+    .section-title {
+      font-size: 15px;
+      font-weight: 700;
+      margin: 24px 0 14px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .section-title::before {
+      content: '';
+      width: 4px;
+      height: 18px;
+      background: var(--primary);
+      border-radius: 2px;
+      flex-shrink: 0;
+    }
+
+    /* ── Calendar ── */
+    .cal-wrapper {
+      background: var(--card);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+      margin-bottom: 20px;
+    }
+    .cal-label {
+      background: var(--primary-light);
+      padding: 10px 20px;
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--primary);
+    }
+    .cal-grid {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+    }
+    .cal-hd {
+      background: #f8f9fa;
+      padding: 8px 0;
+      text-align: center;
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--text-secondary);
+      border-bottom: 1px solid var(--border);
+    }
+    .cal-cell {
+      min-height: 85px;
+      padding: 5px 6px;
+      border-right: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+      font-size: 11px;
+      position: relative;
+      background: #fff;
+    }
+    .cal-cell:nth-child(7n+8) { border-right: none; }
+    .cal-cell.empty { background: #fafafa; }
+    .cal-cell.today { background: #fffde7; }
+    .cal-day {
+      font-size: 12px;
+      font-weight: 700;
+      color: #80868b;
+      margin-bottom: 3px;
+    }
+    .cal-cell.today .cal-day { color: #f9ab00; }
+    .evt {
+      display: block;
+      font-size: 9.5px;
+      line-height: 1.5;
+      padding: 2px 5px;
+      border-radius: 4px;
+      margin-bottom: 2px;
+      color: #fff;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      cursor: pointer;
+      font-weight: 500;
+    }
+
+    /* Project colors for events */
+    .evt.c-blue   { background: #1a73e8; }
+    .evt.c-green  { background: #34a853; }
+    .evt.c-purple { background: #9334e8; }
+    .evt.c-orange { background: #e37400; }
+    .evt.c-red    { background: #ea4335; }
+    .evt.c-brown  { background: #a14200; }
+    .evt.c-cyan   { background: #00bcd4; }
+    .evt.c-pink   { background: #e91e63; }
+    .evt.c-yellow { background: #f9ab00; color: #202124; }
+    .evt.tender  { background: #1a73e8; }
+    .evt.done    { background: #80868b; }
+    .evt.risk    { background: #ea4335; }
+    .evt.milestone { background: #9334e8; }
+
+    /* ── Legend under calendar ── */
+    .cal-legend {
+      padding: 10px 20px;
+      font-size: 11px;
+      color: var(--text-secondary);
+      display: flex;
+      gap: 16px;
+      flex-wrap: wrap;
+      border-top: 1px solid var(--border);
+      align-items: center;
+    }
+    .cal-legend span { display: flex; align-items: center; gap: 4px; }
+
+    /* ── Project Cards ── */
+    .proj-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 16px;
+    }
+    .proj-card {
+      background: var(--card);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+      transition: transform .15s, box-shadow .15s;
+      border-top: 4px solid var(--border);
+    }
+    .proj-card:hover { transform: translateY(-3px); box-shadow: 0 6px 16px rgba(0,0,0,.1); }
+    .proj-card .ph {
+      padding: 14px 18px 10px;
+      border-bottom: 1px solid #f0f0f0;
+    }
+    .proj-card .pt { font-size: 13px; font-weight: 700; }
+    .proj-card .ps { font-size: 11px; color: var(--text-secondary); margin-top: 2px; }
+    .proj-card .pb { padding: 12px 18px 16px; }
+
+    /* colored top border */
+    .proj-card.c-blue  { border-top-color: #1a73e8; }
+    .proj-card.c-green { border-top-color: #34a853; }
+    .proj-card.c-purple{ border-top-color: #9334e8; }
+    .proj-card.c-orange{ border-top-color: #e37400; }
+    .proj-card.c-red   { border-top-color: #ea4335; }
+    .proj-card.c-brown { border-top-color: #a14200; }
+    .proj-card.c-cyan  { border-top-color: #00bcd4; }
+    .proj-card.c-pink  { border-top-color: #e91e63; }
+    .proj-card.c-yellow{ border-top-color: #f9ab00; }
+
+    /* progress bar colored */
+    .pf-blue  { background: #1a73e8 !important; }
+    .pf-green { background: #34a853 !important; }
+    .pf-purple{ background: #9334e8 !important; }
+    .pf-orange{ background: #e37400 !important; }
+    .pf-red   { background: #ea4335 !important; }
+    .pf-brown { background: #a14200 !important; }
+    .pf-cyan  { background: #00bcd4 !important; }
+    .pf-pink  { background: #e91e63 !important; }
+    .pf-yellow{ background: #f9ab00 !important; }
+
+    /* Stages */
+    .stages {
+      display: flex;
+      gap: 3px;
+      margin-bottom: 10px;
+    }
+    .stage-col {
+      flex: 1;
+      text-align: center;
+    }
+    .stage-dot {
+      width: 100%;
+      height: 6px;
+      border-radius: 3px;
+      margin-bottom: 3px;
+    }
+    .stage-dot.done   { background: #34a853; }
+    .stage-dot.ongoing { background: #f9ab00; }
+    .stage-dot.wait   { background: #e0e0e0; }
+    .stage-dot.na     { background: #f0f0f0; border: 1px solid #e0e0e0; }
+    .stage-name { font-size: 9px; color: var(--text-secondary); }
+
+    .progress-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 6px;
+    }
+    .progress-label { font-size: 11px; color: var(--text-secondary); width: 28px; flex-shrink: 0; }
+    .progress-bg {
+      flex: 1;
+      height: 6px;
+      background: #e8eaed;
+      border-radius: 3px;
+      overflow: hidden;
+    }
+    .progress-fill {
+      height: 100%;
+      border-radius: 3px;
+      transition: width .5s ease;
+    }
+    .progress-pct { font-size: 11px; font-weight: 700; width: 30px; text-align: right; }
+
+    .next-step {
+      font-size: 11px;
+      color: var(--text-secondary);
+      background: #f8f9fa;
+      padding: 6px 10px;
+      border-radius: 6px;
+      margin-top: 8px;
+      line-height: 1.5;
+    }
+
+    /* ── Gantt ── */
+    .gantt-wrap {
+      background: var(--card);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      overflow-x: auto;
+    }
+    .gantt-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 12px;
+      min-width: 750px;
+    }
+    .gantt-table th {
+      background: #f8f9fa;
+      padding: 10px 12px;
+      text-align: center;
+      font-weight: 600;
+      color: var(--text-secondary);
+      border-bottom: 1px solid var(--border);
+      white-space: nowrap;
+      font-size: 11px;
+    }
+    .gantt-table th:first-child { text-align: left; }
+    .gantt-table td {
+      padding: 10px 12px;
+      border-bottom: 1px solid #f0f0f0;
+      vertical-align: middle;
+    }
+    .gantt-table td:first-child { font-weight: 600; font-size: 12px; white-space: nowrap; }
+    .gantt-table tr:last-child td { border-bottom: none; }
+    .g-bar-cell { position: relative; height: 22px; }
+    .g-bar {
+      position: absolute;
+      top: 3px;
+      height: 16px;
+      border-radius: 8px;
+      opacity: .85;
+    }
+
+    .gantt-legend {
+      padding: 10px 20px;
+      font-size: 11px;
+      color: var(--text-secondary);
+      display: flex;
+      gap: 16px;
+      flex-wrap: wrap;
+      border-top: 1px solid var(--border);
+      align-items: center;
+    }
+    .gantt-legend span::before {
+      content: '';
+      display: inline-block;
+      width: 14px;
+      height: 8px;
+      border-radius: 4px;
+      margin-right: 6px;
+      vertical-align: middle;
+    }
+
+    /* ── Risk ── */
+    .risk-list { display: flex; flex-direction: column; gap: 10px; }
+    .risk-item {
+      background: var(--card);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 14px 18px;
+      display: flex;
+      gap: 12px;
+      align-items: flex-start;
+      border-left: 4px solid var(--warning);
+    }
+    .risk-item.high { border-left-color: var(--danger); }
+    .risk-item.low  { border-left-color: var(--primary); }
+    .risk-badge {
+      font-size: 10px;
+      font-weight: 700;
+      padding: 2px 10px;
+      border-radius: 10px;
+      flex-shrink: 0;
+      margin-top: 1px;
+    }
+    .risk-badge.high   { background: #fce8e6; color: #c5221f; }
+    .risk-badge.medium { background: #fef7e0; color: #b06000; }
+    .risk-badge.low    { background: #e8f0fe; color: #1a73e8; }
+    .risk-title { font-weight: 600; font-size: 13px; }
+    .risk-desc { font-size: 12px; color: var(--text-secondary); margin-top: 3px; }
+
+    /* Tooltip */
+    .tooltip {
+      position: fixed;
+      background: #202124;
+      color: #fff;
+      font-size: 12px;
+      padding: 8px 14px;
+      border-radius: 8px;
+      pointer-events: none;
+      z-index: 9999;
+      max-width: 260px;
+      display: none;
+      line-height: 1.6;
+      box-shadow: 0 4px 16px rgba(0,0,0,.25);
+      white-space: pre-line;
+    }
+
+    @media (max-width: 640px) {
+      .header { padding: 18px 16px; }
+      .header h1 { font-size: 16px; }
+      .stats { grid-template-columns: repeat(2, 1fr); }
+      .proj-grid { grid-template-columns: 1fr; }
+      .cal-cell { min-height: 50px; font-size: 10px; padding: 3px; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-top">
+    <div>
+      <h1>🏗️ 2026南校区暑期专项项目进度看板</h1>
+      <p>深圳市高级中学南校区总务处 · 共9个专项项目</p>
+    </div>
+    <div class="update-badge">📅 更新于 2026年6月</div>
+  </div>
+</div>
+
+<div class="container">
+
+  <!-- Stats -->
+  <div class="stats">
+    <div class="stat-card">
+      <div class="stat-num c-primary">9</div>
+      <div class="stat-label">专项项目</div>
+      <div class="stat-sub c-gray">已移除图书馆/实验室</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-num c-accent">7</div>
+      <div class="stat-label">已定标</div>
+      <div class="stat-sub c-accent">✅ 招标完成</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-num c-warning">2</div>
+      <div class="stat-label">招标中</div>
+      <div class="stat-sub c-warning">⏳ 7月开标</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-num" style="color:#9334e8">9</div>
+      <div class="stat-label">8月验收</div>
+      <div class="stat-sub c-gray">8/1 & 8/21-25</div>
+    </div>
+  </div>
+
+  <!-- Project color legend -->
+  <div class="stat-card" style="grid-column: 1 / -1; text-align:left;">
+    <div style="font-size:12px;font-weight:600;color:var(--text);margin-bottom:8px;">项目颜色标识</div>
+    <div style="display:flex;flex-wrap:wrap;gap:12px;font-size:11px;color:var(--text-secondary);">
+      <span><span class="cdot" style="background:#1a73e8"></span>①B座栏杆</span>
+      <span><span class="cdot" style="background:#34a853"></span>②教室粉刷</span>
+      <span><span class="cdot" style="background:#9334e8"></span>③A座换门</span>
+      <span><span class="cdot" style="background:#e37400"></span>④宿舍防水</span>
+      <span><span class="cdot" style="background:#ea4335"></span>⑤A座加固</span>
+      <span><span class="cdot" style="background:#a14200"></span>⑥A座外墙</span>
+      <span><span class="cdot" style="background:#00bcd4"></span>⑦心理中心</span>
+      <span><span class="cdot" style="background:#e91e63"></span>⑧运动空间</span>
+      <span><span class="cdot" style="background:#f9ab00"></span>⑨阅读花园</span>
+    </div>
+  </div>
+
+  <!-- Tabs -->
+  <div class="tab-nav">
+    <button class="tab-btn active" onclick="switchTab('calendar')">📅 日历视图</button>
+    <button class="tab-btn" onclick="switchTab('projects')">📋 项目详情</button>
+    <button class="tab-btn" onclick="switchTab('gantt')">📊 工期甘特图</button>
+    <button class="tab-btn" onclick="switchTab('risks')">⚠️ 风险提示</button>
+  </div>
+
+  <!-- ===== TAB: Calendar ===== -->
+  <div class="tab-content active" id="tab-calendar">
+
+    <div class="section-title">2026年7月 · 招标 & 开工</div>
+    <div class="cal-wrapper">
+      <div class="cal-label">🗓️ 7月 —— 招标完成月 · 暑假施工启动</div>
+      <div class="cal-grid">
+        <div class="cal-hd">一</div><div class="cal-hd">二</div><div class="cal-hd">三</div><div class="cal-hd">四</div><div class="cal-hd">五</div><div class="cal-hd">六</div><div class="cal-hd">日</div>
+
+        <div class="cal-cell empty"><div class="cal-day">29</div></div>
+        <div class="cal-cell empty"><div class="cal-day">30</div></div>
+        <div class="cal-cell"><div class="cal-day">1</div>
+          <span class="evt c-blue" data-tip="① B座栏杆更换\n工期：7/1~7/30">🔵 B座栏杆开工</span>
+          <span class="evt c-green" data-tip="② 教室改造粉刷\n工期：7/1~7/30">🟢 教室粉刷开工</span>
+          <span class="evt c-purple" data-tip="③ A座换门\n工期：7/1~7/30">🟣 A座换门开工</span>
+        </div>
+        <div class="cal-cell"><div class="cal-day">2</div></div>
+        <div class="cal-cell today"><div class="cal-day">3</div><span class="evt tender" data-tip="⑥ A座外墙改造 招标开标\n代理：振东\n时间：14:30\n地点：罗湖蔡屋围金龙大厦10楼\n联系人：黎工 18902483223">🎯 外墙开标</span></div>
+        <div class="cal-cell"><div class="cal-day">4</div></div>
+        <div class="cal-cell"><div class="cal-day">5</div></div>
+
+        <div class="cal-cell today"><div class="cal-day">6</div><span class="evt tender" data-tip="⑤ A座加固工程 招标开标\n代理：远东\n时间：09:30\n地点：福田竹子林采联国际">🎯 加固开标</span></div>
+        <div class="cal-cell"><div class="cal-day">7</div></div>
+        <div class="cal-cell"><div class="cal-day">8</div></div>
+        <div class="cal-cell"><div class="cal-day">9</div></div>
+        <div class="cal-cell"><div class="cal-day">10</div>
+          <span class="evt c-orange" data-tip="④ 宿舍防水改造\n工期：7/10~8/20">🟠 宿舍防水开工</span>
+          <span class="evt c-cyan" data-tip="⑦ 心理中心改造\n工期：7/10~8/20">🩵 心理中心开工</span>
+          <span class="evt c-pink" data-tip="⑧ 运动空间改造\n工期：7/10~8/20">🌸 运动空间开工</span>
+          <span class="evt c-yellow" data-tip="⑨ 阅读花园改造\n工期：7/10~8/20">🟡 阅读花园开工</span>
+        </div>
+        <div class="cal-cell"><div class="cal-day">11</div></div>
+        <div class="cal-cell"><div class="cal-day">12</div></div>
+
+        <div class="cal-cell"><div class="cal-day">13</div></div>
+        <div class="cal-cell"><div class="cal-day">14</div></div>
+        <div class="cal-cell"><div class="cal-day">15</div></div>
+        <div class="cal-cell"><div class="cal-day">16</div></div>
+        <div class="cal-cell"><div class="cal-day">17</div></div>
+        <div class="cal-cell"><div class="cal-day">18</div></div>
+        <div class="cal-cell"><div class="cal-day">19</div></div>
+        <div class="cal-cell"><div class="cal-day">20</div></div>
+        <div class="cal-cell"><div class="cal-day" style="color:#1a73e8">21</div><span class="evt c-blue" data-tip="⑤ A座加固\n（待7/6开标后进场）">🔵 加固进场？</span></div>
+        <div class="cal-cell"><div class="cal-day">22</div></div>
+        <div class="cal-cell"><div class="cal-day">23</div></div>
+        <div class="cal-cell"><div class="cal-day">24</div></div>
+        <div class="cal-cell"><div class="cal-day">25</div></div>
+        <div class="cal-cell"><div class="cal-day">26</div></div>
+        <div class="cal-cell"><div class="cal-day">27</div></div>
+        <div class="cal-cell"><div class="cal-day">28</div></div>
+        <div class="cal-cell"><div class="cal-day">29</div></div>
+        <div class="cal-cell"><div class="cal-day">30</div>
+          <span class="evt milestone" data-tip="①②③ 工期截止\n验收日：8月1日">📋 ①②③截止</span>
+        </div>
+        <div class="cal-cell"><div class="cal-day">31</div></div>
+        <div class="cal-cell empty"><div class="cal-day">1</div></div>
+        <div class="cal-cell empty"><div class="cal-day">2</div></div>
+      </div>
+      <div class="cal-legend">
+        <span style="font-weight:600">项目颜色：</span>
+        <span><span class="cdot" style="background:#1a73e8"></span>①栏杆</span>
+        <span><span class="cdot" style="background:#34a853"></span>②教室</span>
+        <span><span class="cdot" style="background:#9334e8"></span>③换门</span>
+        <span><span class="cdot" style="background:#e37400"></span>④宿舍</span>
+        <span><span class="cdot" style="background:#ea4335"></span>⑤加固</span>
+        <span><span class="cdot" style="background:#a14200"></span>⑥外墙</span>
+        <span><span class="cdot" style="background:#00bcd4"></span>⑦心理</span>
+        <span><span class="cdot" style="background:#e91e63"></span>⑧运动</span>
+        <span><span class="cdot" style="background:#f9ab00"></span>⑨花园</span>
+      </div>
+    </div>
+
+    <div class="section-title">2026年8月 · 施工高峰 & 验收</div>
+    <div class="cal-wrapper">
+      <div class="cal-label">🗓️ 8月 —— 施工高峰期 · 集中验收</div>
+      <div class="cal-grid">
+        <div class="cal-hd">一</div><div class="cal-hd">二</div><div class="cal-hd">三</div><div class="cal-hd">四</div><div class="cal-hd">五</div><div class="cal-hd">六</div><div class="cal-hd">日</div>
+
+        <div class="cal-cell empty"><div class="cal-day">27</div></div>
+        <div class="cal-cell empty"><div class="cal-day">28</div></div>
+        <div class="cal-cell empty"><div class="cal-day">29</div></div>
+        <div class="cal-cell empty"><div class="cal-day">30</div></div>
+        <div class="cal-cell empty"><div class="cal-day">31</div></div>
+        <div class="cal-cell"><div class="cal-day">1</div>
+          <span class="evt done" data-tip="验收：\n① B座栏杆更换\n② 教室改造粉刷\n③ A座换门">✅ ①②③验收</span>
+        </div>
+        <div class="cal-cell"><div class="cal-day">2</div></div>
+
+        <div class="cal-cell"><div class="cal-day">3</div></div>
+        <div class="cal-cell"><div class="cal-day">4</div></div>
+        <div class="cal-cell"><div class="cal-day">5</div></div>
+        <div class="cal-cell"><div class="cal-day">6</div></div>
+        <div class="cal-cell"><div class="cal-day">7</div></div>
+        <div class="cal-cell"><div class="cal-day">8</div></div>
+        <div class="cal-cell"><div class="cal-day">9</div></div>
+
+        <div class="cal-cell"><div class="cal-day">10</div></div>
+        <div class="cal-cell"><div class="cal-day">11</div></div>
+        <div class="cal-cell"><div class="cal-day">12</div></div>
+        <div class="cal-cell"><div class="cal-day">13</div><span class="evt risk" data-tip="台风高发期\n核心机房防水保护\n幕墙施工防风措施">⚠️ 台风防范</span></div>
+        <div class="cal-cell"><div class="cal-day">14</div></div>
+        <div class="cal-cell"><div class="cal-day">15</div></div>
+        <div class="cal-cell"><div class="cal-day">16</div></div>
+
+        <div class="cal-cell"><div class="cal-day">17</div></div>
+        <div class="cal-cell"><div class="cal-day">18</div></div>
+        <div class="cal-cell"><div class="cal-day">19</div></div>
+        <div class="cal-cell"><div class="cal-day">20</div>
+          <span class="evt milestone" data-tip="④⑤⑥⑦⑧⑨ 工期截止\n验收日：8/21~8/25">📋 其余项目截止</span>
+        </div>
+        <div class="cal-cell"><div class="cal-day">21</div>
+          <span class="evt done" data-tip="集中验收（8/21~8/25）：\n④宿舍防水 ⑤A座加固\n⑥A座外墙 ⑦心理中心\n⑧运动空间 ⑨阅读花园">✅ 集中验收开始</span>
+        </div>
+        <div class="cal-cell"><div class="cal-day">22</div></div>
+        <div class="cal-cell"><div class="cal-day">23</div></div>
+
+        <div class="cal-cell"><div class="cal-day">24</div></div>
+        <div class="cal-cell"><div class="cal-day">25</div></div>
+        <div class="cal-cell"><div class="cal-day">26</div></div>
+        <div class="cal-cell"><div class="cal-day">27</div></div>
+        <div class="cal-cell"><div class="cal-day">28</div></div>
+        <div class="cal-cell"><div class="cal-day">29</div></div>
+        <div class="cal-cell"><div class="cal-day">30</div></div>
+        <div class="cal-cell"><div class="cal-day">31</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== TAB: Projects ===== -->
+  <div class="tab-content" id="tab-projects">
+    <div class="proj-grid">
+
+      <!-- ① B座栏杆 -->
+      <div class="proj-card c-blue">
+        <div class="ph"><div class="pt" style="color:#1a73e8">① B座不锈钢栏杆更换</div><div class="ps">控制价9.5万 · 文粤监理</div></div>
+        <div class="pb">
+          <div class="stages">
+            <div class="stage-col"><div class="stage-dot done"></div><div class="stage-name">造价</div></div>
+            <div class="stage-col"><div class="stage-dot done"></div><div class="stage-name">设计</div></div>
+            <div class="stage-col"><div class="stage-dot ongoing"></div><div class="stage-name">监理</div></div>
+            <div class="stage-col"><div class="stage-dot done"></div><div class="stage-name">建安</div></div>
+            <div class="stage-col"><div class="stage-dot ongoing"></div><div class="stage-name">招标</div></div>
+            <div class="stage-col"><div class="stage-dot wait"></div><div class="stage-name">验收</div></div>
+          </div>
+          <div class="progress-row"><span class="progress-label">进度</span><div class="progress-bg"><div class="progress-fill pf-blue" style="width:50%"></div></div><span class="progress-pct" style="color:#1a73e8">50%</span></div>
+          <div class="next-step">📅 工期：<b>7/1~7/30</b> &nbsp;|&nbsp; ✅ 验收：<b>8/1</b></div>
+        </div>
+      </div>
+
+      <!-- ② 教室粉刷 -->
+      <div class="proj-card c-green">
+        <div class="ph"><div class="pt" style="color:#34a853">② 教室改造与粉刷</div><div class="ps">控制价17.3万 · 文粤监理</div></div>
+        <div class="pb">
+          <div class="stages">
+            <div class="stage-col"><div class="stage-dot done"></div><div class="stage-name">造价</div></div>
+            <div class="stage-col"><div class="stage-dot done"></div><div class="stage-name">设计</div></div>
+            <div class="stage-col"><div class="stage-dot ongoing"></div><div class="stage-name">监理</div></div>
+            <div class="stage-col"><div class="stage-dot done"></div><div class="stage-name">建安</div></div>
+            <div class="stage-col"><div class="stage-dot done" style="background:#34a853"></div><div class="stage-name" style="color:#34a853">✅招标</div></div>
+            <div class="stage-col"><div class="stage-dot wait"></div><div class="stage-name">验收</div></div>
+          </div>
+          <div class="progress-row"><span class="progress-label">进度</span><div class="progress-bg"><div class="progress-fill pf-green" style="width:65%"></div></div><span class="progress-pct" style="color:#34a853">65%</span></div>
+          <div class="next-step">📅 工期：<b>7/1~7/30</b> &nbsp;|&nbsp; ✅ 验收：<b>8/1</b> &nbsp;|&nbsp; 🎯 最早开工</div>
+        </div>
+      </div>
+
+      <!-- ③ A座换门 -->
+      <div class="proj-card c-purple">
+        <div class="ph"><div class="pt" style="color:#9334e8">③ A座换门工程</div><div class="ps">控制价21.9万 · 中博建监理</div></div>
+        <div class="pb">
+          <div class="stages">
+            <div class="stage-col"><div class="stage-dot done"></div><div class="stage-name">造价</div></div>
+            <div class="stage-col"><div class="stage-dot done"></div><div class="stage-name">设计</div></div>
+            <div class="stage-col"><div class="stage-dot ongoing"></div><div class="stage-name">监理</div></div>
+            <div class="stage-col"><div class="stage-dot done"></div><div class="stage-name">建安</div></div>
+            <div class="stage-col"><div class="stage-dot done" style="background:#34a853"></div><div class="stage-name" style="color:#34a853">✅招标</div></div>
+            <div class="stage-col"><div class="stage-dot wait"></div><div class="stage-name">验收</div></div>
+          </div>
+          <div class="progress-row"><span class="progress-label">进度</span><div class="progress-bg"><div class="progress-fill pf-purple" style="width:65%"></div></div><span class="progress-pct" style="color:#9334e8">65%</span></div>
+          <div class="next-step">📅 工期：<b>7/1~7/30</b> &nbsp;|&nbsp; ✅ 验收：<b>8/1</b> &nbsp;|&nbsp; 预付30%✅</div>
+        </div>
+      </div>
+
+      <!-- ④ 宿舍防水 -->
+      <div class="proj-card c-orange">
+        <div class="ph"><div class="pt" style="color:#e37400">④ 宿舍冲凉间防水改造</div><div class="ps">控制价29.6万 · 中博建监理</div></div>
+        <div class="pb">
+          <div class="stages">
+            <div class="stage-col"><div class="stage-dot done"></div><div class="stage-name">造价</div></div>
+            <div class="stage-col"><div class="stage-dot done"></div><div class="stage-name">设计</div></div>
+            <div class="stage-col"><div class="stage-dot ongoing"></div><div class="stage-name">监理</div></div>
+            <div class="stage-col"><div class="stage-dot done"></div><div class="stage-name">建安</div></div>
+            <div class="stage-col"><div class="stage-dot done" style="background:#34a853"></div><div class="stage-name" style="color:#34a853">✅招标</div></div>
+            <div class="stage-col"><div class="stage-dot wait"></div><div class="stage-name">验收</div></div>
+          </div>
+          <div class="progress-row"><span class="progress-label">进度</span><div class="progress-bg"><div class="progress-fill pf-orange" style="width:65%"></div></div><span class="progress-pct" style="color:#e37400">65%</span></div>
+          <div class="next-step">📅 工期：<b>7/10~8/20</b> &nbsp;|&nbsp; ✅ 验收：<b>8/21-25</b> &nbsp;|&nbsp; 预付30%✅</div>
+        </div>
+      </div>
+
+      <!-- ⑤ A座加固 -->
+      <div class="proj-card c-red">
+        <div class="ph"><div class="pt" style="color:#ea4335">⑤ A座加固工程</div><div class="ps">控制价53.6万 · 文粤监理</div></div>
+        <div class="pb">
+          <div class="stages">
+            <div class="stage-col"><div class="stage-dot ongoing"></div><div class="stage-name">造价</div></div>
+            <div class="stage-col"><div class="stage-dot done"></div><div class="stage-name">设计</div></div>
+            <div class="stage-col"><div class="stage-dot done"></div><div class="stage-name">审图</div></div>
+            <div class="stage-col"><div class="stage-dot ongoing"></div><div class="stage-name">监理</div></div>
+            <div class="stage-col"><div class="stage-dot done"></div><div class="stage-name">建安</div></div>
+            <div class="stage-col"><div class="stage-dot ongoing"></div><div class="stage-name">招标</div></div>
+            <div class="stage-col"><div class="stage-dot wait"></div><div class="stage-name">验收</div></div>
+          </div>
+          <div class="progress-row"><span class="progress-label">进度</span><div class="progress-bg"><div class="progress-fill pf-red" style="width:45%"></div></div><span class="progress-pct" style="color:#ea4335">45%</span></div>
+          <div class="next-step">🎯 <b>7/6 09:30开标</b> &nbsp;|&nbsp; 📅 工期：<b>7/10~8/20</b> &nbsp;|&nbsp; 验收：<b>8/21-25</b></div>
+        </div>
+      </div>
+
+      <!-- ⑥ A座外墙 -->
+      <div class="proj-card c-brown">
+        <div class="ph"><div class="pt" style="color:#a14200">⑥ A座东西侧外墙改造</div><div class="ps">控制价51.6万 · 文粤监理</div></div>
+        <div class="pb">
+          <div class="stages">
+            <div class="stage-col"><div class="stage-dot done"></div><div class="stage-name">造价</div></div>
+            <div class="stage-col"><div class="stage-dot ongoing"></div><div class="stage-name">设计</div></div>
+            <div class="stage-col"><div class="stage-dot na"></div><div class="stage-name">审图</div></div>
+            <div class="stage-col"><div class="stage-dot ongoing"></div><div class="stage-name">监理</div></div>
+            <div class="stage-col"><div class="stage-dot done"></div><div class="stage-name">建安</div></div>
+            <div class="stage-col"><div class="stage-dot ongoing"></div><div class="stage-name">招标</div></div>
+            <div class="stage-col"><div class="stage-dot wait"></div><div class="stage-name">验收</div></div>
+          </div>
+          <div class="progress-row"><span class="progress-label">进度</span><div class="progress-bg"><div class="progress-fill pf-brown" style="width:40%"></div></div><span class="progress-pct" style="color:#a14200">40%</span></div>
+          <div class="next-step">🎯 <b>7/3 14:30开标</b> &nbsp;|&nbsp; 📅 工期：<b>7/10~8/20</b> &nbsp;|&nbsp; 验收：<b>8/21-25</b></div>
+        </div>
+      </div>
+
+      <!-- ⑦ 心理中心 -->
+      <div class="proj-card c-cyan">
+        <div class="ph"><div class="pt" style="color:#00bcd4">⑦ 心理成长中心改造</div><div class="ps">控制价15.3万 · 中博建监理</div></div>
+        <div class="pb">
+          <div class="stages">
+            <div class="stage-col"><div class="stage-dot ongoing"></div><div class="stage-name">造价</div></div>
+            <div class="stage-col"><div class="stage-dot ongoing"></div><div class="stage-name">设计</div></div>
+            <div class="stage-col"><div class="stage-dot na"></div><div class="stage-name">审图</div></div>
+            <div class="stage-col"><div class="stage-dot ongoing"></div><div class="stage-name">监理</div></div>
+            <div class="stage-col"><div class="stage-dot done"></div><div class="stage-name">建安</div></div>
+            <div class="stage-col"><div class="stage-dot done" style="background:#34a853"></div><div class="stage-name" style="color:#34a853">✅招标</div></div>
+            <div class="stage-col"><div class="stage-dot wait"></div><div class="stage-name">验收</div></div>
+          </div>
+          <div class="progress-row"><span class="progress-label">进度</span><div class="progress-bg"><div class="progress-fill pf-cyan" style="width:55%"></div></div><span class="progress-pct" style="color:#00bcd4">55%</span></div>
+          <div class="next-step">📅 工期：<b>7/10~8/20</b> &nbsp;|&nbsp; ✅ 验收：<b>8/21-25</b> &nbsp;|&nbsp; ⛔ 西侧大门待确认</div>
+        </div>
+      </div>
+
+      <!-- ⑧ 运动空间 -->
+      <div class="proj-card c-pink">
+        <div class="ph"><div class="pt" style="color:#e91e63">⑧ 运动空间改造</div><div class="ps">控制价66.8万 · 深鹏建设监理</div></div>
+        <div class="pb">
+          <div class="stages">
+            <div class="stage-col"><div class="stage-dot ongoing"></div><div class="stage-name">造价</div></div>
+            <div class="stage-col"><div class="stage-dot ongoing"></div><div class="stage-name">设计</div></div>
+            <div class="stage-col"><div class="stage-dot na"></div><div class="stage-name">审图</div></div>
+            <div class="stage-col"><div class="stage-dot ongoing"></div><div class="stage-name">监理</div></div>
+            <div class="stage-col"><div class="stage-dot done"></div><div class="stage-name">建安</div></div>
+            <div class="stage-col"><div class="stage-dot done" style="background:#34a853"></div><div class="stage-name" style="color:#34a853">✅招标</div></div>
+            <div class="stage-col"><div class="stage-dot wait"></div><div class="stage-name">验收</div></div>
+          </div>
+          <div class="progress-row"><span class="progress-label">进度</span><div class="progress-bg"><div class="progress-fill pf-pink" style="width:55%"></div></div><span class="progress-pct" style="color:#e91e63">55%</span></div>
+          <div class="next-step">📅 工期：<b>7/10~8/20</b> &nbsp;|&nbsp; ✅ 验收：<b>8/21-25</b> &nbsp;|&nbsp; 预付30%✅</div>
+        </div>
+      </div>
+
+      <!-- ⑨ 阅读花园 -->
+      <div class="proj-card c-yellow">
+        <div class="ph"><div class="pt" style="color:#b06000">⑨ 阅读花园·运动花园改造</div><div class="ps">控制价92.3万 · 深鹏建设监理</div></div>
+        <div class="pb">
+          <div class="stages">
+            <div class="stage-col"><div class="stage-dot ongoing"></div><div class="stage-name">造价</div></div>
+            <div class="stage-col"><div class="stage-dot ongoing"></div><div class="stage-name">设计</div></div>
+            <div class="stage-col"><div class="stage-dot na"></div><div class="stage-name">审图</div></div>
+            <div class="stage-col"><div class="stage-dot ongoing"></div><div class="stage-name">监理</div></div>
+            <div class="stage-col"><div class="stage-dot done"></div><div class="stage-name">建安</div></div>
+            <div class="stage-col"><div class="stage-dot done" style="background:#34a853"></div><div class="stage-name" style="color:#34a853">✅招标</div></div>
+            <div class="stage-col"><div class="stage-dot wait"></div><div class="stage-name">验收</div></div>
+          </div>
+          <div class="progress-row"><span class="progress-label">进度</span><div class="progress-bg"><div class="progress-fill pf-yellow" style="width:55%"></div></div><span class="progress-pct" style="color:#b06000">55%</span></div>
+          <div class="next-step">📅 工期：<b>7/10~8/20</b> &nbsp;|&nbsp; ✅ 验收：<b>8/21-25</b> &nbsp;|&nbsp; ⛔ 排水沟待确认</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ===== TAB: Gantt ===== -->
+  <div class="tab-content" id="tab-gantt">
+    <div class="section-title">各项目工期安排（2026年7月~8月）</div>
+    <div class="gantt-wrap">
+      <table class="gantt-table">
+        <thead>
+          <tr>
+            <th>项目</th>
+            <th>7月上旬</th>
+            <th>7月中旬</th>
+            <th>7月下旬</th>
+            <th>8月上旬</th>
+            <th>8月中旬</th>
+            <th>8月下旬</th>
+            <th>验收日期</th>
+            <th>状态</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><span style="color:#1a73e8">① B座栏杆</span></td>
+            <td colspan="2"><div class="g-bar-cell"><div class="g-bar" style="left:0;width:55%;background:#1a73e8"></div></div></td>
+            <td></td><td></td><td></td><td></td>
+            <td style="font-weight:600;color:#34a853">8月1日</td>
+            <td style="color:#1a73e8;font-weight:600">招标中</td>
+          </tr>
+          <tr>
+            <td><span style="color:#34a853">② 教室粉刷</span></td>
+            <td colspan="2"><div class="g-bar-cell"><div class="g-bar" style="left:0;width:55%;background:#34a853"></div></div></td>
+            <td></td><td></td><td></td><td></td>
+            <td style="font-weight:600;color:#34a853">8月1日</td>
+            <td style="color:#34a853;font-weight:600">施工中</td>
+          </tr>
+          <tr>
+            <td><span style="color:#9334e8">③ A座换门</span></td>
+            <td colspan="2"><div class="g-bar-cell"><div class="g-bar" style="left:0;width:55%;background:#9334e8"></div></div></td>
+            <td></td><td></td><td></td><td></td>
+            <td style="font-weight:600;color:#34a853">8月1日</td>
+            <td style="color:#34a853;font-weight:600">招标完成</td>
+          </tr>
+          <tr>
+            <td><span style="color:#e37400">④ 宿舍防水</span></td>
+            <td></td>
+            <td colspan="3"><div class="g-bar-cell"><div class="g-bar" style="left:0;width:60%;background:#e37400"></div></div></td>
+            <td></td><td></td>
+            <td style="font-weight:600;color:#34a853">8/21-25</td>
+            <td style="color:#34a853;font-weight:600">招标完成</td>
+          </tr>
+          <tr>
+            <td><span style="color:#ea4335">⑤ A座加固</span></td>
+            <td></td>
+            <td colspan="4"><div class="g-bar-cell"><div class="g-bar" style="left:5%;width:15%;background:#1a73e8"></div><div class="g-bar" style="left:20%;width:65%;background:#ea4335"></div></div></td>
+            <td></td>
+            <td style="font-weight:600;color:#34a853">8/21-25</td>
+            <td style="color:#f9ab00;font-weight:600">7/6开标</td>
+          </tr>
+          <tr>
+            <td><span style="color:#a14200">⑥ A座外墙</span></td>
+            <td></td>
+            <td colspan="4"><div class="g-bar-cell"><div class="g-bar" style="left:5%;width:15%;background:#1a73e8"></div><div class="g-bar" style="left:20%;width:65%;background:#a14200"></div></div></td>
+            <td></td>
+            <td style="font-weight:600;color:#34a853">8/21-25</td>
+            <td style="color:#f9ab00;font-weight:600">7/3开标</td>
+          </tr>
+          <tr>
+            <td><span style="color:#00bcd4">⑦ 心理中心</span></td>
+            <td></td>
+            <td colspan="3"><div class="g-bar-cell"><div class="g-bar" style="left:0;width:60%;background:#00bcd4"></div></div></td>
+            <td></td><td></td>
+            <td style="font-weight:600;color:#34a853">8/21-25</td>
+            <td style="color:#34a853;font-weight:600">招标完成</td>
+          </tr>
+          <tr>
+            <td><span style="color:#e91e63">⑧ 运动空间</span></td>
+            <td></td>
+            <td colspan="3"><div class="g-bar-cell"><div class="g-bar" style="left:0;width:60%;background:#e91e63"></div></div></td>
+            <td></td><td></td>
+            <td style="font-weight:600;color:#34a853">8/21-25</td>
+            <td style="color:#34a853;font-weight:600">招标完成</td>
+          </tr>
+          <tr>
+            <td><span style="color:#b06000">⑨ 阅读花园</span></td>
+            <td></td>
+            <td colspan="3"><div class="g-bar-cell"><div class="g-bar" style="left:0;width:60%;background:#f9ab00"></div></div></td>
+            <td></td><td></td>
+            <td style="font-weight:600;color:#34a853">8/21-25</td>
+            <td style="color:#34a853;font-weight:600">招标完成</td>
+          </tr>
+        </tbody>
+      </table>
+      <div class="gantt-legend">
+        <span style="font-weight:600">项目颜色：</span>
+        <span style="background:#1a73e8"></span>①栏杆
+        <span style="background:#34a853"></span>②教室
+        <span style="background:#9334e8"></span>③换门
+        <span style="background:#e37400"></span>④宿舍
+        <span style="background:#ea4335"></span>⑤加固
+        <span style="background:#a14200"></span>⑥外墙
+        <span style="background:#00bcd4"></span>⑦心理
+        <span style="background:#e91e63"></span>⑧运动
+        <span style="background:#f9ab00"></span>⑨花园
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== TAB: Risks ===== -->
+  <div class="tab-content" id="tab-risks">
+    <div class="section-title">⛔ 待确认问题（需尽快决策）</div>
+    <div class="risk-list">
+      <div class="risk-item high">
+        <span class="risk-badge high">紧急</span>
+        <div>
+          <div class="risk-title">⑦ 心理中心西侧大门是否保留？</div>
+          <div class="risk-desc">影响施工方案和幕墙设计 · 建议：教学处 & 设计单位确认</div>
+        </div>
+      </div>
+      <div class="risk-item high">
+        <span class="risk-badge high">紧急</span>
+        <div>
+          <div class="risk-title">⑤ A座加固前需排查地下主电路网</div>
+          <div class="risk-desc">施工前必须完成 · 建议：总务处 & 电力部门</div>
+        </div>
+      </div>
+      <div class="risk-item medium">
+        <span class="risk-badge medium">重要</span>
+        <div>
+          <div class="risk-title">⑦ 心理中心幕墙与⑥ A座外墙方案一致性</div>
+          <div class="risk-desc">建议：设计单位统一方案</div>
+        </div>
+      </div>
+      <div class="risk-item medium">
+        <span class="risk-badge medium">重要</span>
+        <div>
+          <div class="risk-title">⑨ 阅读花园排水沟 & A座-B座电缆井位置</div>
+          <div class="risk-desc">需与⑤ A座加固打桩协调 · 建议：设计单位 & 总务处</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section-title" style="margin-top:28px">⚠️ 施工风险</div>
+    <div class="risk-list">
+      <div class="risk-item medium">
+        <span class="risk-badge medium">风险</span>
+        <div>
+          <div class="risk-title">噪声扰民（⑤ A座加固打桩、⑥ 外墙改造）</div>
+          <div class="risk-desc">措施：提前告知周边社区，张贴公告，公布联系方式</div>
+        </div>
+      </div>
+      <div class="risk-item medium">
+        <span class="risk-badge medium">风险</span>
+        <div>
+          <div class="risk-title">台风暴雨（7~8月高发期）</div>
+          <div class="risk-desc">措施：核心机房防水保护，幕墙施工防风</div>
+        </div>
+      </div>
+      <div class="risk-item low">
+        <span class="risk-badge low">提醒</span>
+        <div>
+          <div class="risk-title">施工期间财产安全 & 多项目工序交叉协调</div>
+          <div class="risk-desc">电脑/机房保护 · A座加固/阅读花园/外墙施工协调</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- Tooltip -->
+<div class="tooltip" id="tooltip"></div>
+
+<script>
+  function switchTab(name) {
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+    event.currentTarget.classList.add('active');
+    document.getElementById('tab-' + name).classList.add('active');
+  }
+
+  const tooltip = document.getElementById('tooltip');
+  document.querySelectorAll('[data-tip]').forEach(el => {
+    el.addEventListener('mouseenter', e => {
+      tooltip.textContent = el.getAttribute('data-tip');
+      tooltip.style.display = 'block';
+      tooltip.style.whiteSpace = 'pre-line';
+      let x = e.pageX + 12, y = e.pageY + 12;
+      tooltip.style.left = x + 'px';
+      tooltip.style.top = y + 'px';
+    });
+    el.addEventListener('mousemove', e => {
+      let x = e.pageX + 12, y = e.pageY + 12;
+      if (x + tooltip.offsetWidth > window.innerWidth + window.scrollX) x = e.pageX - tooltip.offsetWidth - 12;
+      if (y + tooltip.offsetHeight > window.innerHeight + window.scrollY) y = e.pageY - tooltip.offsetHeight - 12;
+      tooltip.style.left = x + 'px';
+      tooltip.style.top = y + 'px';
+    });
+    el.addEventListener('mouseleave', () => { tooltip.style.display = 'none'; });
+  });
+</script>
+</body>
+</html>
